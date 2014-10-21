@@ -3215,7 +3215,7 @@ static void __sched __schedule(void)
 	preempt_disable();
 	cpu = smp_processor_id();
 	rq = cpu_rq(cpu);
-	rcu_note_context_switch(cpu);
+	rcu_note_context_switch();
 	prev = rq->curr;
 
 	/*
