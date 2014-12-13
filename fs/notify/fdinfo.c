@@ -85,7 +85,7 @@ static int inotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
 		return 0;
 
 	inode_mark = container_of(mark, struct inotify_inode_mark, fsn_mark);
-	inode = igrab(mark->i.inode);
+	inode = igrab(mark->inode);
 	if (inode) {
 		ret = seq_printf(m, "inotify wd:%x ino:%lx sdev:%x "
 				 "mask:%x ignored_mask:%x ",
@@ -122,7 +122,7 @@ static int fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
 		mflags |= FAN_MARK_IGNORED_SURV_MODIFY;
 
 	if (mark->flags & FSNOTIFY_MARK_FLAG_INODE) {
-		inode = igrab(mark->i.inode);
+		inode = igrab(mark->inode);
 		if (!inode)
 			goto out;
 		ret = seq_printf(m, "fanotify ino:%lx sdev:%x "
@@ -133,7 +133,7 @@ static int fanotify_fdinfo(struct seq_file *m, struct fsnotify_mark *mark)
 		ret |= seq_putc(m, '\n');
 		iput(inode);
 	} else if (mark->flags & FSNOTIFY_MARK_FLAG_VFSMOUNT) {
-		struct mount *mnt = real_mount(mark->m.mnt);
+		struct mount *mnt = real_mount(mark->mnt);
 
 		ret = seq_printf(m, "fanotify mnt_id:%x mflags:%x mask:%x "
 				 "ignored_mask:%x\n", mnt->mnt_id, mflags,
