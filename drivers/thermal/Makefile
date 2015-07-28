@@ -52,3 +52,5 @@ subdir-ccflags-y += \
 	-Wno-parentheses-equality \
 	-Wno-enum-conversion \
 	-Wno-gcc-compat
+
+obj-$(CONFIG_THERMAL_MONITOR_SIMPLE)	+= msm_thermal_simple.o
