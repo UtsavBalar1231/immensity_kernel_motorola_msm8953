@@ -124,6 +124,9 @@ static int chacha_decrypt(struct aead_request *req)
 	struct chacha_req *creq = &rctx->u.chacha;
 	int err;
 
+	if (rctx->cryptlen == 0)
+		goto skip;
+
 	chacha_iv(creq->iv, req, 1);
 
 	ablkcipher_request_set_callback(&creq->req, aead_request_flags(req),
@@ -135,6 +138,7 @@ static int chacha_decrypt(struct aead_request *req)
 	if (err)
 		return err;
 
+skip:
 	return poly_verify_tag(req);
 }
 
@@ -380,6 +384,9 @@ static int chacha_encrypt(struct aead_request *req)
 	struct chacha_req *creq = &rctx->u.chacha;
 	int err;
 
+	if (req->cryptlen == 0)
+		goto skip;
+
 	chacha_iv(creq->iv, req, 1);
 
 	ablkcipher_request_set_callback(&creq->req, aead_request_flags(req),
@@ -391,6 +398,7 @@ static int chacha_encrypt(struct aead_request *req)
 	if (err)
 		return err;
 
+skip:
 	return poly_genkey(req);
 }
 
