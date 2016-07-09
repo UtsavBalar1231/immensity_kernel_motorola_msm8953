@@ -25,3 +25,5 @@ obj-$(CONFIG_AUDIO_OCMEM) += ocmem-audio.o
 #TODO: remove me b/62058353
 subdir-ccflags-y += \
 	-Wno-non-literal-null-conversion
+
+ccflags-y := -Os
