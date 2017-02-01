@@ -46,10 +46,6 @@ chacha20-neon-y := chacha20-neon-core.o chacha20-neon-glue.o
 
 CFLAGS_aes-glue-ce.o	:= -DUSE_V8_CRYPTO_EXTENSIONS
 
-obj-$(CONFIG_CRYPTO_CRC32_ARM64) += crc32-arm64.o
-
-CFLAGS_crc32-arm64.o	:= -mcpu=generic+crc
-
 ccflags-y := -O3
 
 $(obj)/aes-glue-%.o: $(src)/aes-glue.c FORCE
