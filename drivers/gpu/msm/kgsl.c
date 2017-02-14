@@ -4060,6 +4060,7 @@ error_close_mmu:
 error_pwrctrl_close:
 	kgsl_pwrctrl_close(device);
 error:
+	kgsl_device_debugfs_close(device);
 	_unregister_device(device);
 	return status;
 }
@@ -4087,6 +4088,7 @@ void kgsl_device_platform_remove(struct kgsl_device *device)
 
 	kgsl_pwrctrl_close(device);
 
+	kgsl_device_debugfs_close(device);
 	_unregister_device(device);
 }
 EXPORT_SYMBOL(kgsl_device_platform_remove);
