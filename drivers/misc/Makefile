@@ -99,3 +99,7 @@ obj-$(CONFIG_DTV_FC8300) += moto-dtv-fc8300/
 # TODO: remove me b/62058353
 subdir-ccflags-y += \
 	-Wno-ignored-attributes
+
+obj-$(CONFIG_IR_MAXQ616)	+= ir_maxq616.o
+
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
