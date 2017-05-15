@@ -192,4 +192,6 @@ void apr_set_subsys_state(void);
 const char *apr_get_lpass_subsys_name(void);
 uint16_t apr_get_reset_domain(uint16_t proc);
 bool q6voice_voice_call_active(void);
+int apr_start_rx_rt(void *handle);
+int apr_end_rx_rt(void *handle);
 #endif
