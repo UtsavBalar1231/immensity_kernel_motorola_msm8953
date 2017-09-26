@@ -4817,8 +4817,8 @@ static int tasha_codec_spk_boost_event(struct snd_soc_dapm_widget *w,
 				int event)
 {
 	struct snd_soc_codec *codec = w->codec;
-	u16 boost_path_ctl, boost_path_cfg1;
-	u16 reg, reg_mix;
+	u16 boost_path_ctl = 0, boost_path_cfg1 = 0;
+	u16 reg = 0, reg_mix = 0;
 
 	dev_dbg(codec->dev, "%s %s %d\n", __func__, w->name, event);
 
@@ -4949,7 +4949,7 @@ static int tasha_codec_enable_prim_interpolator(
 				u16 reg, int event)
 {
 	struct tasha_priv *tasha = snd_soc_codec_get_drvdata(codec);
-	u16 prim_int_reg;
+	u16 prim_int_reg = 0;
 	u16 ind = 0;
 
 	prim_int_reg = tasha_interp_get_primary_reg(reg, &ind);
@@ -8589,7 +8589,7 @@ static int tasha_codec_vbat_enable_event(struct snd_soc_dapm_widget *w,
 	int ret = 0;
 	struct snd_soc_codec *codec = w->codec;
 	struct tasha_priv *tasha = snd_soc_codec_get_drvdata(codec);
-	u16 vbat_path_ctl, vbat_cfg, vbat_path_cfg;
+	u16 vbat_path_ctl, vbat_cfg, vbat_path_cfg = 0;
 
 	vbat_path_ctl = WCD9335_CDC_VBAT_VBAT_PATH_CTL;
 	vbat_cfg = WCD9335_CDC_VBAT_VBAT_CFG;
@@ -8957,7 +8957,7 @@ static int tasha_int_dem_inp_mux_put(struct snd_kcontrol *kcontrol,
 	struct snd_soc_codec *codec = widget->codec;
 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
 	unsigned int val;
-	unsigned short look_ahead_dly_reg = WCD9335_CDC_RX0_RX_PATH_CFG0;
+	 unsigned short look_ahead_dly_reg = WCD9335_CDC_RX0_RX_PATH_CFG0;
 
 	val = ucontrol->value.enumerated.item[0];
 	if (val >= e->items)
