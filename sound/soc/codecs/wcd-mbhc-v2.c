@@ -556,7 +556,7 @@ static void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 	struct snd_soc_codec *codec = mbhc->codec;
 	bool is_pa_on = false;
 
-	u16 elect_result;
+	u16 elect_result = 0;
 	WCD_MBHC_RSC_ASSERT_LOCKED(mbhc);
 
 	pr_debug("%s: enter insertion %d hph_status %x\n",
