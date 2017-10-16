@@ -573,7 +573,8 @@ static bool eval_need(struct cpu_data *f)
 	spin_lock_irqsave(&state_lock, flags);
 	thres_idx = f->online_cpus ? f->online_cpus - 1 : 0;
 	list_for_each_entry(c, &f->lru, sib) {
-		if (c->busy >= f->busy_up_thres[thres_idx])
+		if (c->busy >= f->busy_up_thres[thres_idx] ||
+			sched_cpu_high_irqload(c->cpu))
 			c->is_busy = true;
 		else if (c->busy < f->busy_down_thres[thres_idx])
 			c->is_busy = false;
