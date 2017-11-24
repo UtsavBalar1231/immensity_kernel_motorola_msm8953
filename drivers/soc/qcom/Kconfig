@@ -527,19 +527,6 @@ config PANIC_ON_GLINK_ERR
 	 Select this option to upgrade warnings for potentially unrecoverable
 	 glink failures, to a kernel panic for easier detection and debug
 
-config MSM_SPCOM
-	depends on MSM_GLINK
-	bool "Secure Processor Communication over GLINK"
-	help
-	  spcom driver allows loading Secure Processor Applications and
-	  sending messages to Secure Processor Applications.
-	  spcom provides interface to both user space app and kernel driver.
-	  It is using glink as the transport layer, which provides multiple
-	  logical channels over signle physical channel.
-	  The physical layer is based on shared memory and interrupts.
-	  spcom provides clients/server API, although currently only one client
-	  or server is allowed per logical channel.
-
 config MSM_SMEM_LOGGING
 	depends on MSM_SMEM
 	bool "MSM Shared Memory Logger"
