@@ -2823,7 +2823,6 @@ static void check_sanity_work(struct work_struct *work)
 	fg_stay_awake(&chip->sanity_wakeup_source);
 
 try_again:
-	rc = read_beat(chip, &beat_count);
 	if (rc)
 		goto resched;
 
@@ -2832,6 +2831,7 @@ try_again:
 			/* Wait for 1 FG cycle and read it once again */
 			msleep(1500);
 			tried_once = true;
+			rc = read_beat(chip, &beat_count);
 			goto try_again;
 		} else {
 			pr_err("Beat count not updating\n");
