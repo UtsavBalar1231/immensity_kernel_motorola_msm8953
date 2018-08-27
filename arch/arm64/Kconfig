@@ -23,6 +23,7 @@ config ARM64
 	select CLONE_BACKWARDS
 	select COMMON_CLK if !ARCH_MSM
 	select CPU_PM if (SUSPEND || CPU_IDLE)
+	select CRC32
 	select DCACHE_WORD_ACCESS
 	select GENERIC_ALLOCATOR
 	select EDAC_SUPPORT
