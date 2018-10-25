@@ -6,8 +6,16 @@
 #define pr_fmt(fmt) "devfreq_boost: " fmt
 
 #include <linux/devfreq_boost.h>
+#include <linux/moduleparam.h>
 #include <linux/fb.h>
 #include <linux/input.h>
+
+
+static unsigned int msm_cpubw_boost_freq = CONFIG_DEVFREQ_MSM_CPUBW_BOOST_FREQ;
+static unsigned short input_boost_duration = CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS;
+
+module_param(msm_cpubw_boost_freq, uint, 0644);
+module_param(input_boost_duration, short, 0644);
 
 struct boost_dev {
 	struct workqueue_struct *wq;
@@ -197,7 +205,7 @@ static void devfreq_input_boost(struct work_struct *work)
 	}
 
 	queue_delayed_work(b->wq, &b->input_unboost,
-		msecs_to_jiffies(CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS));
+		msecs_to_jiffies(input_boost_duration));
 }
 
 static void devfreq_input_unboost(struct work_struct *work)
@@ -386,7 +394,7 @@ static int __init devfreq_boost_init(void)
 	}
 
 	d->devices[DEVFREQ_MSM_CPUBW].boost_freq =
-		CONFIG_DEVFREQ_MSM_CPUBW_BOOST_FREQ;
+		msm_cpubw_boost_freq;
 
 	devfreq_boost_input_handler.private = d;
 	ret = input_register_handler(&devfreq_boost_input_handler);
