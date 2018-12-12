@@ -7,12 +7,12 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 ## Copy this script inside the kernel directory
 KERNEL_DIR=$PWD
 KERNEL_TOOLCHAIN=/home/nick/data/kernel/prebuilts/aarch64-linux-android-4.9/bin/aarch64-linux-android-
-CLANG_TOOLCHAIN=/home/nick/data/kernel/prebuilts/7.0-DragonTC/bin/clang
+CLANG_TOOLCHAIN=/home/nick/data/kernel/prebuilts/clang-r346389/bin/clang-8
 KERNEL_DEFCONFIG=potter_defconfig
 DTBTOOL=$KERNEL_DIR/Dtbtool/
 JOBS=28
 ANY_KERNEL2_DIR=$KERNEL_DIR/AnyKernel2/
-FINAL_KERNEL_ZIP=Optimus_Drunk_Potter-$DATE_POSTFIX.zip
+FINAL_KERNEL_ZIP=Optimus_Drunk_Potter-$DATE_POSTFIX-EAS.zip
 # Speed up build process
 MAKE="./makeparallel"
 
@@ -27,7 +27,7 @@ echo "**** Setting Toolchain ****"
 export CROSS_COMPILE=$KERNEL_TOOLCHAIN
 export ARCH=arm64
 export SUBARCH=arm64
-export KBUILD_COMPILER_STRING="DragonTC clang version 7.0"
+export KBUILD_COMPILER_STRING="Clang Version 8.0.5"
 
 # Clean build always lol
 echo "**** Cleaning ****"
