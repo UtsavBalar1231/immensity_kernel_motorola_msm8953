@@ -60,7 +60,7 @@ static u32 mdscr_read(void)
  * Allow root to disable self-hosted debug from userspace.
  * This is useful if you want to connect an external JTAG debugger.
  */
-static u32 debug_enabled = 1;
+static u32 debug_enabled = 0;
 
 static int create_debug_debugfs_entry(void)
 {
