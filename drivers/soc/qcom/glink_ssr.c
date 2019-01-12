@@ -339,6 +339,7 @@ void close_ch_worker(struct work_struct *work)
 
 	BUG_ON(!ss_info->cb_data);
 	kfree(ss_info->cb_data);
+	ss_info->cb_data = NULL;
 	kfree(close_work);
 }
 
