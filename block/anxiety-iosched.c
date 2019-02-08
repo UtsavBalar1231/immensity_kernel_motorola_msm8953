@@ -20,7 +20,7 @@
 #include <linux/init.h>
 
 /* default tunable values */
-static const uint8_t max_writes_starved = 8; /* max amount of times reads can starve pending writes */
+#define	DEFAULT_MAX_WRITES_STARVED		8	/* max amount of times reads can starve pending writes */
 
 struct anxiety_data {
 	struct list_head queue[2];
@@ -117,7 +117,7 @@ static int anxiety_init_queue(struct request_queue *q, struct elevator_type *elv
 	INIT_LIST_HEAD(&data->queue[READ]);
 	INIT_LIST_HEAD(&data->queue[WRITE]);
 	data->writes_starved = 0;
-	data->max_writes_starved = max_writes_starved;
+	data->max_writes_starved = DEFAULT_MAX_WRITES_STARVED;
 
 	/* set the elevator to us */
 	spin_lock_irq(q->queue_lock);
