@@ -19,14 +19,14 @@
 #include <linux/slab.h>
 #include <linux/init.h>
 
-/* default tunable values */
-#define	DEFAULT_MAX_WRITES_STARVED		8	/* max amount of times reads can starve pending writes */
+/* Default tunable values */
+#define	DEFAULT_MAX_WRITES_STARVED		8	/* Max times reads can starve a write */
 
 struct anxiety_data {
 	struct list_head queue[2];
 	uint16_t writes_starved;
 
-	/* tunables */
+	/* Tunables */
 	uint8_t max_writes_starved;
 };
 
@@ -37,22 +37,22 @@ static void anxiety_merged_requests(struct request_queue *q, struct request *rq,
 
 static __always_inline struct request *anxiety_choose_request(struct anxiety_data *mdata)
 {
-	/* prioritize reads unless writes are exceedingly starved */
+	/* Prioritize reads unless writes are exceedingly starved */
 	bool starved = mdata->writes_starved > mdata->max_writes_starved;
 
-	/* read */
+	/* Handle a read request */
 	if (!starved && !list_empty(&mdata->queue[READ])) {
 		mdata->writes_starved++;
 		return rq_entry_fifo(mdata->queue[READ].next);
 	}
 
-	/* write */
+	/* Handle a write request */
 	if (!list_empty(&mdata->queue[WRITE])) {
 		mdata->writes_starved = 0;
 		return rq_entry_fifo(mdata->queue[WRITE].next);
 	}
 
-	/* all queues are empty, i.e. no pending requests */
+	/* If there are no requests, then there is nothing to starve */
 	mdata->writes_starved = 0;
 	return NULL;
 }
@@ -105,21 +105,23 @@ static int anxiety_init_queue(struct request_queue *q, struct elevator_type *elv
 	if (!eq)
 		return -ENOMEM;
 
-	/* allocate data */
+	/* Allocate the data */
 	data = kmalloc_node(sizeof(*data), GFP_KERNEL, q->node);
 	if (!data) {
 		kobject_put(&eq->kobj);
 		return -ENOMEM;
 	}
+
+	/* Set the elevator data */
 	eq->elevator_data = data;
 
-	/* initialize data */
+	/* Initialize */
 	INIT_LIST_HEAD(&data->queue[READ]);
 	INIT_LIST_HEAD(&data->queue[WRITE]);
 	data->writes_starved = 0;
 	data->max_writes_starved = DEFAULT_MAX_WRITES_STARVED;
 
-	/* set the elevator to us */
+	/* Set elevator to Anxiety */
 	spin_lock_irq(q->queue_lock);
 	q->elevator = eq;
 	spin_unlock_irq(q->queue_lock);
@@ -127,7 +129,7 @@ static int anxiety_init_queue(struct request_queue *q, struct elevator_type *elv
 	return 0;
 }
 
-/* sysfs tunables */
+/* Sysfs access */
 static ssize_t anxiety_max_writes_starved_show(struct elevator_queue *e, char *page)
 {
 	struct anxiety_data *ad = e->elevator_data;
