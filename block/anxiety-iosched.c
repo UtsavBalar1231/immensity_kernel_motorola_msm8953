@@ -20,14 +20,14 @@
 #include <linux/init.h>
 
 /* default tunable values */
-static const unsigned int max_writes_starved = 8; /* max amount of times reads can starve pending writes */
+static const uint8_t max_writes_starved = 8; /* max amount of times reads can starve pending writes */
 
 struct anxiety_data {
 	struct list_head queue[2];
-	unsigned int writes_starved;
+	uint16_t writes_starved;
 
 	/* tunables */
-	unsigned int max_writes_starved;
+	uint8_t max_writes_starved;
 };
 
 static void anxiety_merged_requests(struct request_queue *q, struct request *rq, struct request *next)
@@ -132,7 +132,7 @@ static ssize_t anxiety_max_writes_starved_show(struct elevator_queue *e, char *p
 {
 	struct anxiety_data *ad = e->elevator_data;
 
-	return snprintf(page, PAGE_SIZE, "%d\n", ad->max_writes_starved);
+	return snprintf(page, PAGE_SIZE, "%u\n", ad->max_writes_starved);
 }
 
 static ssize_t anxiety_max_writes_starved_store(struct elevator_queue *e, const char *page, size_t count)
@@ -140,7 +140,7 @@ static ssize_t anxiety_max_writes_starved_store(struct elevator_queue *e, const 
 	struct anxiety_data *ad = e->elevator_data;
 	int ret;
 
-	ret = kstrtouint(page, 0, &ad->max_writes_starved);
+	ret = kstrtou8(page, 0, &ad->max_writes_starved);
 	if (ret < 0)
 		return ret;
 
