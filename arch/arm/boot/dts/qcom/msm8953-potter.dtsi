@@ -555,7 +555,7 @@
 };
 
 &pmi_haptic{
-	qcom,vmax-mv = <2600>;
+	qcom,vmax-mv = <2700>;
 };
 
 &blsp1_uart0 {
