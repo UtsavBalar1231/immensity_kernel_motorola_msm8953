@@ -83,3 +83,5 @@ subdir-ccflags-y += \
 	-Wno-header-guard \
 	-Wno-parentheses-equality \
 	-Wno-duplicate-decl-specifier
+
+msm_drm-$(CONFIG_KLAPSE) += sde/klapse.o
