@@ -13,13 +13,13 @@
 #include <linux/moduleparam.h>
 #include <linux/slab.h>
 
-static unsigned int input_boost_freq = CONFIG_INPUT_BOOST_FREQ;
-static unsigned short input_boost_duration_ms = CONFIG_INPUT_BOOST_DURATION_MS;
-static unsigned short wake_boost_duration = CONFIG_WAKE_BOOST_DURATION_MS;
+static unsigned int input_boost_freq __read_mostly = CONFIG_INPUT_BOOST_FREQ;
+static unsigned short input_boost_duration_ms __read_mostly = CONFIG_INPUT_BOOST_DURATION_MS;
+static unsigned short wake_boost_duration __read_mostly = CONFIG_WAKE_BOOST_DURATION_MS;
 
 module_param(input_boost_freq, uint, 0644);
-module_param(input_boost_duration_ms, short, 0644);
-module_param(wake_boost_duration, short, 0644);
+module_param(input_boost_duration_ms, ushort, 0644);
+module_param(wake_boost_duration, ushort, 0644);
 
 /* Available bits for boost_drv state */
 #define SCREEN_AWAKE		BIT(0)
