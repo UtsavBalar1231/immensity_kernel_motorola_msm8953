@@ -11,11 +11,11 @@
 #include <linux/input.h>
 
 
-static unsigned int msm_cpubw_boost_freq = CONFIG_DEVFREQ_MSM_CPUBW_BOOST_FREQ;
-static unsigned short input_boost_duration = CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS;
+static unsigned int msm_cpubw_boost_freq __read_mostly = CONFIG_DEVFREQ_MSM_CPUBW_BOOST_FREQ;
+static unsigned short input_boost_duration __read_mostly = CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS;
 
 module_param(msm_cpubw_boost_freq, uint, 0644);
-module_param(input_boost_duration, short, 0644);
+module_param(input_boost_duration, ushort, 0644);
 
 struct boost_dev {
 	struct workqueue_struct *wq;
