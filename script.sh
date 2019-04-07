@@ -6,8 +6,6 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 
 ## Copy this script inside the kernel directory
 KERNEL_DIR=$PWD
-MPATH=/home/utsavabalar1231
-KERNEL_TOOLCHAIN=$MPATH/gcc8/bin/aarch64-linux-gnu-
 KERNEL_DEFCONFIG=potter_defconfig
 DTB=$KERNEL_DIR/dtbtool/
 JOBS=8
@@ -20,7 +18,7 @@ FINAL_KERNEL_ZIP=$KERNEL-$TYPE-$RELEASE-$DATE_POSTFIX.zip
 MAKE="./makeparallel"
 
 echo "INITIALIZE ALL THE DIRECTORIES"
-cd $MPATH
+cd
 rm -rf IMMEN*
 cd $ZIP_DIR
 mkdir treble-unsupported
@@ -38,7 +36,7 @@ red='\033[0;31m'
 nocol='\033[0m'
 
 echo -e  "$P // Setting up Toolchain //"
-export CROSS_COMPILE=$KERNEL_TOOLCHAIN
+export CROSS_COMPILE=~/gcc/bin/aarch64-linux-android-
 export ARCH=arm64
 export SUBARCH=arm64
 
@@ -72,7 +70,7 @@ echo -e "$R          BUILDING IMMENSITY•KERNEL          "
 echo -e "________________________________________________$nocol"
 
 make $KERNEL_DEFCONFIG O=out
-make -j$JOBS O=out
+make -j$JOBS CC=~/clang/bin/clang-9 CLANG_TRIPLE=aarch64-linux-android- O=out
 
 echo -e "$cyan_______________________"
  echo " // Generating DT.img //"
@@ -103,7 +101,7 @@ cp $KERNEL_DIR/out/arch/arm64/boot/dtb $ZIP_DIR/treble-unsupported/
 echo -e "$R // Time to zip everything up! //"
 cd $ZIP_DIR/
 zip -r9 $FINAL_KERNEL_ZIP * -x README $FINAL_KERNEL_ZIP
-cp $KERNEL_DIR/zip/$FINAL_KERNEL_ZIP $MPATH/$FINAL_KERNEL_ZIP
+cp $KERNEL_DIR/zip/$FINAL_KERNEL_ZIP /home/utsavbalar1231/$FINAL_KERNEL_ZIP
 
 echo -e "$yellow // Build Successfull  //"
 cd $KERNEL_DIR
