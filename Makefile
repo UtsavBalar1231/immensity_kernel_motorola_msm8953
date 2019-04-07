@@ -365,14 +365,14 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
+OPTS = -fmodulo-sched -fmodulo-sched-allow-regmoves -ftree-vectorize -ftree-slp-vectorize -fvect-cost-model -fgcse-after-reload -fgcse-sm -ffast-math -fsingle-precision-constant -Wno-ignored-optimization-argument  -Wno-frame-larger-than=
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
-LDFLAGS_MODULE  =
+LDFLAGS_MODULE  = --strip-debug
 CFLAGS_KERNEL	=
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage -fno-tree-loop-im
-CFLAGS_KCOV	= -fsanitize-coverage=trace-pc
-
+CFLAGS_KCOV    = -fsanitize-coverage=trace-pc
 
 ifeq ($(cc-name),clang)
 ifneq ($(CROSS_COMPILE),)
@@ -412,7 +412,7 @@ KBUILD_CFLAGS   := -Werror -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -std=gnu89 $(CLANG_FLAGS)
+		   -std=gnu89 $(CLANG_FLAGS) $(OPTS)
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -629,12 +629,15 @@ KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
 KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
 
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
-KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
+KBUILD_CFLAGS += $(call cc-disable-warning,maybe-uninitialized,)
+KBUILD_AFLAGS   += $(call cc-option, -Oz, -Os)
+else
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS	+= -O3
 else
 KBUILD_CFLAGS	+= -O2
 endif
-
+endif
 # Tell gcc to never replace conditional load with a non-conditional one
 KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
 
