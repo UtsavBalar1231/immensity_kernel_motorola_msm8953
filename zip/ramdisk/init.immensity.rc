@@ -1,0 +1,15 @@
+on late-fs
+	# boot time fs tune
+	write /sys/block/mmcblk0/queue/read_ahead_kb 2048
+	write /sys/block/mmcblk0/queue/nr_requests 256
+        write /sys/block/mmcblk0rpmb/queue/read_ahead_kb 2048
+	write /sys/block/dm-0/queue/read_ahead_kb 2048 
+	write /sys/block/dm-1/queue/read_ahead_kb 2048
+
+
+on property:sys.boot_completed=1
+        exec u:r:init:s0 -- /init.qcom.post_boot.sh
+        exec u:r:su:s0 root root -- /init.qcom.post_boot.sh
+	exec u:r:magisk:s0 root root -- /init.qcom.post_boot.sh
+        setprop ro.vendor.qti.config.zram true
+	write /proc/sys/vm/page-cluster 0
