@@ -27,12 +27,18 @@ is_slot_device=0;
 chmod -R 750 $ramdisk/*;
 chown -R root:root $ramdisk/*;
 
-ui_print "Enjoy The Kernel";
 ## AnyKernel install
 dump_boot;
 
 # begin ramdisk changes
 
+rm $ramdisk/init.optimus.rc
+rm $ramdisk/init.immensity.rc
+rm $ramdisk/init.extended_kernel.rc
+
+backup_file init.rc;
+
+insert_line init.rc "init.immensity.rc" after "import /init.usb.configfs.rc" "import /init.immensity.rc";
 
 # end ramdisk changes
 
