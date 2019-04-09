@@ -712,7 +712,7 @@ static int tomtom_get_sample_rate(struct snd_soc_codec *codec, int path)
 			(TOMTOM_A_CDC_RX1_B5_CTL + 8 * (path - 1)));
 }
 
-static int tomtom_compare_bit_format(struct snd_soc_codec *codec,
+static int __maybe_unused tomtom_compare_bit_format(struct snd_soc_codec *codec,
 				int bit_format)
 {
 	int i = 0;
