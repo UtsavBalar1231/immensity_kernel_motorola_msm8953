@@ -27,6 +27,11 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+function write(){
+	echo -n $2 > $1
+	}
+
+{
     #scheduler settings
     echo 3 > /proc/sys/kernel/sched_window_stats_policy
     echo 3 > /proc/sys/kernel/sched_ravg_hist_size
@@ -156,3 +161,4 @@ target=`getprop ro.board.platform`
         mkswap /data/vendor/swap/swapfile
         swapon /data/vendor/swap/swapfile -p 32758
     fi
+}&
