@@ -42,7 +42,7 @@ echo "INITIALIZE ALL THE DIRECTORIES"
 cd $HOMEPATH
 rm -rf IMMEN*
 cd $ZIP_DIR
-mkdir treble-unsupported
+mkdir treble-supported
 cd $KERNEL_DIR
 
 ############################################################################################################################################################
@@ -141,12 +141,12 @@ rm -rf $ZIP_DIR/dtb
 ############################################################################################################################################################
 
 echo -e "$yellow // - Copying Image.gz - //"
-cp $KERNEL_DIR/out/arch/arm64/boot/Image.gz $ZIP_DIR/treble-unsupported/
+cp $KERNEL_DIR/out/arch/arm64/boot/Image.gz $ZIP_DIR/treble-supported/
 
 ############################################################################################################################################################
 
 echo -e "$yellow // - Copying dtb - //"
-cp $KERNEL_DIR/out/arch/arm64/boot/dtb $ZIP_DIR/treble-unsupported/
+cp $KERNEL_DIR/out/arch/arm64/boot/dtb $ZIP_DIR/treble-supported/
 
 ############################################################################################################################################################
 																			   #
@@ -167,7 +167,7 @@ echo -e "$yellow // - Cleaning up - //$nocol"                                   
 rm -rf $ZIP_DIR/$FINAL_KERNEL_ZIP															   #
 rm -rf $ZIP_DIR/Image.gz																   #
 rm -rf $ZIP_DIR/dtb																	   #
-rm -rf $ZIP_DIR/treble-unsupported															   #
+rm -rf $ZIP_DIR/treble-supported															   #
 rm -rf $KERNEL_DIR/out/																	   #
 																			   #
 ############################################################################################################################################################
