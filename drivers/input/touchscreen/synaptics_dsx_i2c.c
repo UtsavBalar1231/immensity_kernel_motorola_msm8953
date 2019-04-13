@@ -4228,7 +4228,6 @@ static int synaptics_rmi4_i2c_read(struct synaptics_rmi4_data *rmi4_data,
 		unsigned short addr, unsigned char *data, unsigned short length)
 {
 	int retval;
-	unsigned char retry;
 	unsigned char buf;
 	struct i2c_msg msg[] = {
 		{
@@ -4253,23 +4252,9 @@ static int synaptics_rmi4_i2c_read(struct synaptics_rmi4_data *rmi4_data,
 	if (retval != PAGE_SELECT_LEN)
 		goto exit;
 
-	for (retry = 0; retry < SYN_I2C_RETRY_TIMES; retry++) {
-		if (i2c_transfer(rmi4_data->i2c_client->adapter, msg, 2) == 2) {
-			retval = length;
-			break;
-		}
-		dev_err(&rmi4_data->i2c_client->dev,
-				"%s: I2C retry %d\n",
-				__func__, retry + 1);
-		msleep(20);
-	}
-
-	if (retry == SYN_I2C_RETRY_TIMES) {
-		dev_err(&rmi4_data->i2c_client->dev,
-				"%s: I2C read %db@x%x over retry limit\n",
-				__func__, length, addr);
-		retval = -EIO;
-	}
+	retval = i2c_transfer(rmi4_data->i2c_client->adapter, msg, 2);
+	if (retval != 2)
+		return -EINVAL;
 
 exit:
 	mutex_unlock(&(rmi4_data->rmi4_io_ctrl_mutex));
@@ -4291,7 +4276,6 @@ static int synaptics_rmi4_i2c_write(struct synaptics_rmi4_data *rmi4_data,
 		unsigned short addr, unsigned char *data, unsigned short length)
 {
 	int retval;
-	unsigned char retry;
 	struct temp_buffer *tb = &rmi4_data->write_buf;
 	struct i2c_msg msg[1];
 
@@ -4314,23 +4298,9 @@ static int synaptics_rmi4_i2c_write(struct synaptics_rmi4_data *rmi4_data,
 	*(tb->buf) = addr & MASK_8BIT;
 	memcpy(tb->buf+1, &data[0], length);
 
-	for (retry = 0; retry < SYN_I2C_RETRY_TIMES; retry++) {
-		if (i2c_transfer(rmi4_data->i2c_client->adapter, msg, 1) == 1) {
-			retval = length;
-			break;
-		}
-		dev_err(&rmi4_data->i2c_client->dev,
-				"%s: I2C retry %d\n",
-				__func__, retry + 1);
-		msleep(20);
-	}
-
-	if (retry == SYN_I2C_RETRY_TIMES) {
-		dev_err(&rmi4_data->i2c_client->dev,
-				"%s: I2C write %db@x%x over retry limit\n",
-				__func__, length, addr);
-		retval = -EIO;
-	}
+	retval = i2c_transfer(rmi4_data->i2c_client->adapter, msg, 1);
+	if (retval != 1)
+		return -EINVAL;
 
 exit:
 	mutex_unlock(&(rmi4_data->rmi4_io_ctrl_mutex));
