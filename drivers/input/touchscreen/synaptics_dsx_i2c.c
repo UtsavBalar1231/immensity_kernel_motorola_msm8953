@@ -6800,7 +6800,7 @@ void synaptics_rmi4_new_function(enum exp_fn fn_type, bool insert,
 		mutex_init(&exp_fn_ctrl.list_mutex);
 		INIT_LIST_HEAD(&exp_fn_ctrl.fn_list);
 		exp_fn_ctrl.det_workqueue =
-			create_singlethread_workqueue("rmi_det_workqueue");
+			alloc_ordered_workqueue("rmi_det_workqueue", WQ_HIGHPRI);
 		if (IS_ERR_OR_NULL(exp_fn_ctrl.det_workqueue))
 			pr_err("unable to create a workqueue\n");
 		INIT_DELAYED_WORK(&exp_fn_ctrl.det_work,
