@@ -149,7 +149,6 @@ qcom,mdss-dsi-dma-trigger = "trigger_sw";
 qcom,mdss-dsi-mdp-trigger = "none";
 qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
 qcom,mdss-dsi-reset-sequence = <1 5>, <0 5>, <1 5>, <0 5>, <1 20>;
-qcom,mdss-dsi-lp11-init;
 qcom,mdss-dsi-tx-eot-append;
 
 /* Enable ESD checking */

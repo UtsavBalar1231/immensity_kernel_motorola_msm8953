@@ -12,7 +12,9 @@ qcom,mdss-dsi-panel-width = <720>;
 qcom,mdss-dsi-panel-height = <1440>;
 qcom,mdss-pan-physical-width-dimension = <62>;
 qcom,mdss-pan-physical-height-dimension = <110>;
-
+qcom,ulps-enabled;
+qcom,suspend-ulps-enabled;
+qcom,panel-allow-phy-poweroff;
 qcom,mdss-dsi-h-front-porch = <25>;
 qcom,mdss-dsi-h-back-porch = <25>;
 qcom,mdss-dsi-h-pulse-width = <14>;
@@ -58,7 +60,6 @@ qcom,mdss-dsi-h-sync-pulse = <1>;
 qcom,mdss-dsi-traffic-mode = "burst_mode";
 qcom,mdss-dsi-bllp-eof-power-mode;
 qcom,mdss-dsi-bllp-power-mode;
-qcom,mdss-dsi-lp11-init;
 qcom,mdss-dsi-tx-eot-append;
 qcom,mdss-dsi-dma-trigger = "trigger_sw";
 qcom,mdss-dsi-mdp-trigger = "none";
