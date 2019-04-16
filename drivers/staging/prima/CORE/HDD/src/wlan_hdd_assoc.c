@@ -494,7 +494,7 @@ void hdd_copy_ht_caps(struct ieee80211_ht_cap *hdd_ht_cap,
             ANTENNA_SEL_INFO_TX_SOUNDING_PPDU;
 
     /* mcs data rate */
-    for (i = 0; i < IEEE80211_HT_MCS_MASK_LEN; ++i)
+    for (i = 0; i < IEEE80211_HT_MCS_MASK_LEN; ++i) {
         hdd_ht_cap->mcs.rx_mask[i] =
             roam_ht_cap->supportedMCSSet[i];
 
@@ -503,7 +503,7 @@ void hdd_copy_ht_caps(struct ieee80211_ht_cap *hdd_ht_cap,
             ((short) (roam_ht_cap->supportedMCSSet[10]));
         hdd_ht_cap->mcs.tx_params =
             roam_ht_cap->supportedMCSSet[12];
-
+	}
 }
 
 
