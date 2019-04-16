@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2019 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -2761,6 +2761,7 @@ eHalStatus sme_ProcessMsg(tHalHandle hHal, vos_msg_t* pMsg)
                    vos_msg_t vosMessage = {0};
                    tANI_U32 session_id = 0;
                    bool active_scan;
+                   tANI_U32 nTime = 0;
 
                    if (pSmeCoexInd->coexIndType == SIR_COEX_IND_TYPE_DISABLE_AGGREGATION_IN_2p4)
                    {
@@ -2788,6 +2789,11 @@ eHalStatus sme_ProcessMsg(tHalHandle hHal, vos_msg_t* pMsg)
                        pMac->scan.fRestartIdleScan = eANI_BOOLEAN_TRUE;
                        pMac->scan.fCancelIdleScan = eANI_BOOLEAN_FALSE;
 
+                       if(csrIsAllSessionDisconnected(pMac) &&
+                          !HAL_STATUS_SUCCESS(csrScanTriggerIdleScan(pMac,
+                           &nTime))) {
+                              csrScanStartIdleScanTimer(pMac, nTime);
+                       }
                        /*
                         * If aggregation during SCO is enabled, there is a
                         * possibility for an active BA session. This session
@@ -3419,9 +3425,8 @@ eHalStatus sme_ScanRequest(tHalHandle hHal, tANI_U8 sessionId, tCsrScanRequest *
 
     do
     {
-        //Moto IKVPREL1L-7890: Dont block any scans while in BT call similar to titan/Victara
-        if(pMac->scan.fScanEnable) /*&&
-           (pMac->isCoexScoIndSet ? sco_isScanAllowed(pMac, pscanReq) : TRUE))*/
+        if(pMac->scan.fScanEnable &&
+           (pMac->isCoexScoIndSet ? sco_isScanAllowed(pMac, pscanReq) : TRUE))
         {
             status = sme_AcquireGlobalLock( &pMac->sme );
             if ( HAL_STATUS_SUCCESS( status ) )
@@ -10160,22 +10165,19 @@ eHalStatus sme_SetTmLevel(tHalHandle hHal, v_U16_t newTMLevel, v_U16_t tmMode)
     return(status);
 }
 
-/*---------------------------------------------------------------------------
-
-  \brief sme_featureCapsExchange() - SME interface to exchange capabilities between
-  Host and FW.
-
-  \param  hHal - HAL handle for device
-
-  \return NONE
-
----------------------------------------------------------------------------*/
-void sme_featureCapsExchange( tHalHandle hHal)
+VOS_STATUS
+sme_featureCapsExchange(struct sir_feature_caps_params *params)
 {
-    v_CONTEXT_t vosContext = vos_get_global_context(VOS_MODULE_ID_SME, NULL);
-    MTRACE(vos_trace(VOS_MODULE_ID_SME,
-                     TRACE_CODE_SME_RX_HDD_CAPS_EXCH, NO_SESSION, 0));
-    WDA_featureCapsExchange(vosContext);
+	VOS_STATUS status;
+	v_CONTEXT_t vosContext = vos_get_global_context(VOS_MODULE_ID_SME,
+							NULL);
+
+	MTRACE(vos_trace(VOS_MODULE_ID_SME,
+	       TRACE_CODE_SME_RX_HDD_CAPS_EXCH, NO_SESSION, 0));
+
+	status = WDA_featureCapsExchange(vosContext, params);
+
+	return status;
 }
 
 /*---------------------------------------------------------------------------
@@ -13287,7 +13289,8 @@ tANI_BOOLEAN  sme_Is11dCountrycode(tHalHandle hHal)
     }
 }
 
-eHalStatus sme_SpoofMacAddrReq(tHalHandle hHal, v_MACADDR_t *macaddr)
+eHalStatus
+sme_SpoofMacAddrReq(tHalHandle hHal, v_MACADDR_t *macaddr, bool spoof_mac_oui)
 {
    tpAniSirGlobal pMac = PMAC_STRUCT(hHal);
    eHalStatus status = eHAL_STATUS_SUCCESS;
@@ -13304,6 +13307,8 @@ eHalStatus sme_SpoofMacAddrReq(tHalHandle hHal, v_MACADDR_t *macaddr)
                                                     sizeof(tSirSpoofMacAddrReq), 0);
            vos_mem_copy(pMacSpoofCmd->u.macAddrSpoofCmd.macAddr,
                                                macaddr->bytes, VOS_MAC_ADDRESS_LEN);
+
+           pMacSpoofCmd->u.macAddrSpoofCmd.spoof_mac_oui = spoof_mac_oui;
 
            status = csrQueueSmeCommand(pMac, pMacSpoofCmd, false);
            if ( !HAL_STATUS_SUCCESS( status ) )
