@@ -2886,12 +2886,14 @@ static void synaptics_dsx_sensor_state(struct synaptics_rmi4_data *rmi4_data,
 	case STATE_SUSPEND:
 		synaptics_dsx_wait_for_idle(rmi4_data);
 
-		if (!rmi4_data->in_bootloader)
+		if (!rmi4_data->in_bootloader) {
 			synaptics_dsx_apply_modifiers(rmi4_data, STATE_SUSPEND);
+		}
 
-		if (!rmi4_data->suspend_is_wakeable)
+		if (!rmi4_data->suspend_is_wakeable) {
 			synaptics_rmi4_irq_enable(rmi4_data, false);
 			break;
+		}
 
 	case STATE_ACTIVE:
 		if (!rmi4_data->in_bootloader)
@@ -2906,7 +2908,7 @@ static void synaptics_dsx_sensor_state(struct synaptics_rmi4_data *rmi4_data,
 
 		if (gStat.enabled)
 			statistics_start_timekeeping(rmi4_data);
-			break;
+		break;
 
 	case STATE_STANDBY:
 		synaptics_rmi4_irq_enable(rmi4_data, false);
@@ -2956,9 +2958,10 @@ static void synaptics_dsx_sensor_state(struct synaptics_rmi4_data *rmi4_data,
 			pr_debug("de-allocated input device\n");
 		}
 
-		if (gStat.enabled)
+		if (gStat.enabled) {
 			statistics_stop_timekeeping();
 			break;
+		}
 	}
 
 	pr_info("state change %s -> %s\n",
