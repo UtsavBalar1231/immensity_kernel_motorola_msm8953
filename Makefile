@@ -730,6 +730,8 @@ KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
 KBUILD_CFLAGS += $(call cc-option, -fcatch-undefined-behavior)
 KBUILD_CFLAGS += $(call cc-option, -no-integrated-as)
 KBUILD_AFLAGS += $(call cc-option, -no-integrated-as)
+# Variable initialization
+KBUILD_CFLAGS += $(call clang-ifversion, -ge, 0800, -ftrivial-auto-var-init=pattern, $(call cc-option, -fsanitize=local-init,))
 else
 
 KBUILD_CFLAGS += $(call cc-option,-fno-delete-null-pointer-checks,)
