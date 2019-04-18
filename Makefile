@@ -714,7 +714,8 @@ KBUILD_CFLAGS += $(call cc-disable-warning, tautological-compare)
 # source of a reference will be _MergedGlobals and not on of the whitelisted names.
 # See modpost pattern 2
 KBUILD_CFLAGS += $(call cc-option, -mno-global-merge,)
-
+# Variable initialization
+KBUILD_CFLAGS += $(call clang-ifversion, -ge, 0800, -ftrivial-auto-var-init=pattern, $(call cc-option, -fsanitize=local-init,))
 else
 
 KBUILD_CFLAGS += $(call cc-option,-fno-delete-null-pointer-checks,)
