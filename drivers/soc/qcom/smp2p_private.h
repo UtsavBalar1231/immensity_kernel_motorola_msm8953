@@ -244,14 +244,8 @@ void *msm_smp2p_init_rmt_lpb_proc(int remote_pid);
 int msm_smp2p_deinit_rmt_lpb_proc(int remote_pid);
 void *smp2p_get_log_ctx(void);
 int smp2p_get_debug_mask(void);
-
-#ifdef CONFIG_MSM_SMP2P_TEST
 int smp2p_remote_mock_rx_interrupt(void);
 void *msm_smp2p_get_remote_mock_smem_item(uint32_t *size);
-#else
-static inline int smp2p_remote_mock_rx_interrupt(void) { return 0; }
-static inline void *msm_smp2p_get_remote_mock_smem_item(uint32_t *size) { return NULL; }
-#endif
 
 /* Inbound / outbound Interrupt configuration. */
 struct smp2p_interrupt_config {
