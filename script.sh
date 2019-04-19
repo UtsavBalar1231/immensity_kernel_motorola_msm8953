@@ -16,8 +16,8 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 
 KERNEL_DIR=$PWD
 HOMEPATH=/home/utsavbalar1231
-KERNEL_TOOLCHAIN=$HOMEPATH/linaro/bin/aarch64-linux-gnu-
-ARM32_TOOLCHAIN=$HOMEPATH/arm32/bin/arm-linux-gnueabi-
+KERNEL_TOOLCHAIN=$HOMEPATH/gcc8/bin/aarch64-linux-gnu-
+CLANG_TOOLCHAIN=$HOMEPATH/clang/bin/clang-9
 KERNEL_DEFCONFIG=potter_defconfig
 DTB=$KERNEL_DIR/dtbtool/
 ZIP_DIR=$KERNEL_DIR/zip/
@@ -100,11 +100,9 @@ echo -e "________________________________________________$nocol"
 
 export ARCH=arm64
 make $KERNEL_DEFCONFIG O=out
-make 		CC=clang \
+make 		CC=$CLANG_TOOLCHAIN \
 		CLANG_TRIPLE=aarch64-linux-gnu- \
-		CLANG_TRIPLE_ARM32=arm-linux-gnueabi- \
 		CROSS_COMPILE=$KERNEL_TOOLCHAIN \
-		CROSS_COMPILE_ARM32=$ARM32_TOOLCHAIN \
 		-j$JOBS \
 		O=out
 ############################################################################################################################################################
