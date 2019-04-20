@@ -695,7 +695,7 @@ static struct mdss_rot_hw_resource *mdss_rotator_hw_alloc(
 	struct mdss_rot_hw_resource *hw;
 	struct mdss_data_type *mdata = mdss_mdp_get_mdata();
 	u32 pipe_ndx, offset = mdss_mdp_get_wb_ctl_support(mdata, true);
-	int ret = 0;
+	int ret;
 
 	hw = devm_kzalloc(&mgr->pdev->dev, sizeof(struct mdss_rot_hw_resource),
 		GFP_KERNEL);
@@ -756,10 +756,8 @@ static struct mdss_rot_hw_resource *mdss_rotator_hw_alloc(
 	if (ret)
 		goto error;
 
-	if (pipe_id >= mdata->ndma_pipes) {
-		ret = -EINVAL;
+	if (pipe_id >= mdata->ndma_pipes)
 		goto error;
-	}
 
 	pipe_ndx = mdata->dma_pipes[pipe_id].ndx;
 	hw->pipe = mdss_mdp_pipe_assign(mdata, hw->mixer,
