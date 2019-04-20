@@ -435,13 +435,13 @@ VL53L0_Error VL53L0_DataInit(VL53L0_DEV Dev)
 	}
 
 	/* Disable the following checks */
-    if (Status == VL53L0_ERROR_NONE)
-        Status = VL53L0_SetLimitCheckEnable(Dev,
-                VL53L0_CHECKENABLE_SIGNAL_REF_CLIP, 0);
+	if (Status == VL53L0_ERROR_NONE)
+	        Status = VL53L0_SetLimitCheckEnable(Dev,
+	                VL53L0_CHECKENABLE_SIGNAL_REF_CLIP, 0);
 
-    if (Status == VL53L0_ERROR_NONE)
-        Status = VL53L0_SetLimitCheckEnable(Dev,
-                VL53L0_CHECKENABLE_RANGE_IGNORE_THRESHOLD, 0);
+        if (Status == VL53L0_ERROR_NONE)
+    	        Status = VL53L0_SetLimitCheckEnable(Dev,
+                        VL53L0_CHECKENABLE_RANGE_IGNORE_THRESHOLD, 0);
 
 	/* Limit default values */
 	if (Status == VL53L0_ERROR_NONE) {
