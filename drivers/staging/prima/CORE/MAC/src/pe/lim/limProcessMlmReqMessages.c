@@ -4037,8 +4037,9 @@ tLimMlmRemoveKeyCnf  mlmRemoveKeyCnf;
       goto end;
   }
   else
+  {
     staIdx = pStaDs->staIndex;
-  
+
 
 
     psessionEntry->limMlmState = eLIM_MLM_WT_REMOVE_STA_KEY_STATE;
@@ -4047,7 +4048,8 @@ tLimMlmRemoveKeyCnf  mlmRemoveKeyCnf;
     // Package WDA_REMOVE_STAKEY_REQ message parameters
     limSendRemoveStaKeyReq( pMac,pMlmRemoveKeyReq,staIdx,psessionEntry);
     return;
- 
+  }
+
 end:
     limPostSmeRemoveKeyCnf( pMac,
       psessionEntry,
