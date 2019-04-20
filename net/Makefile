@@ -8,7 +8,7 @@
 obj-y	:= nonet.o
 
 obj-$(CONFIG_NET)		:= socket.o core/
-
+CFLAGS_socket.o := $(call cc-disable-warning,stringop-overflow)
 tmp-$(CONFIG_COMPAT) 		:= compat.o
 obj-$(CONFIG_NET)		+= $(tmp-y)
 
