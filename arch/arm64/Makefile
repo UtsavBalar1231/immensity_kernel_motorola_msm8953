@@ -84,6 +84,33 @@ tune-$(CONFIG_ARCH_SDM450)	:= -mtune=cortex-a53
 KBUILD_CFLAGS	+= $(arch-y) $(tune-y)
 KBUILD_AFLAGS	+= $(arch-y) $(tune-y)
 
+#################################
+# Cortex-A53 Optimization Flags #
+#################################
+KBUILD_CFLAGS   += $(call cc-option, -g0,) \
+                   $(call cc-option, -ffast-math,) \
+                   $(call cc-option, -floop-nest-optimize,) \
+                   $(call cc-option, -fgraphite-identity,) \
+                   $(call cc-option, -ftree-loop-distribution,) \
+                   $(call cc-option, -funsafe-math-optimizations,) \
+                   $(call cc-option, -mcpu=cortex-a53+crc+crypto+sve+simd,) \
+                   $(call cc-option, -march=armv8-a+crc+crypto+sve+simd,) \
+                   $(call cc-option, -mtune=cortex-a53,)
+KBUILD_AFLAGS   += $(call cc-option, -g0,) \
+                   $(call cc-option, -ffast-math,) \
+                   $(call cc-option, -floop-nest-optimize,) \
+                   $(call cc-option, -fgraphite-identity,) \
+                   $(call cc-option, -ftree-loop-distribution,) \
+                   $(call cc-option, -funsafe-math-optimizations,) \
+                   $(call cc-option, -mcpu=cortex-a53+crc+crypto+sve+simd,) \
+                   $(call cc-option, -march=armv8-a+crc+crypto+sve+simd,) \
+                   $(call cc-option, -mtune=cortex-a53,)
+KBUILD_LDFLAGS  += $(call ld-option, -z combreloc,) \
+                   $(call ld-option, --reduce-memory-overheads)
+LDFLAGS_vmlinux += $(call ld-option, --relax) \
+                   $(call ld-option, --reduce-memory-overheads)
+EXTRA_CFLAGS += $(call cc-option,-funroll-loops)
+
 CHECKFLAGS	+= -D__aarch64__
 
 ifeq ($(CONFIG_ARM64_ERRATUM_843419), y)
