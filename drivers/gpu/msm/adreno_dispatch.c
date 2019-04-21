@@ -1016,7 +1016,6 @@ int adreno_dispatcher_queue_cmd(struct adreno_device *adreno_dev,
 {
 	struct adreno_dispatcher_cmdqueue *dispatch_q =
 				ADRENO_CMDBATCH_DISPATCH_CMDQUEUE(cmdbatch);
-	struct kgsl_device *device = KGSL_DEVICE(adreno_dev);
 	int ret;
 
 	spin_lock(&drawctxt->lock);
