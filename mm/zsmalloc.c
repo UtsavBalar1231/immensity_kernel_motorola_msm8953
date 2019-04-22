@@ -59,7 +59,6 @@
 #include <linux/fs.h>
 #include <linux/anon_inodes.h>
 #include <linux/migrate.h>
-#include <linux/compaction.h>
 #include <linux/zsmalloc.h>
 #include <linux/zpool.h>
 
@@ -2663,15 +2662,6 @@ struct zs_pool *zs_create_pool(char *name, gfp_t flags)
 	}
 
 	pool->flags = flags;
-
-	/*
-	 * Make sure that we mark pages movable when mobile page compaction is
-	 * is enabled and that we don't mark them if it is not.
-	 */
-	if (sysctl_mobile_page_compaction)
-		pool->flags |= __GFP_MOVABLE;
-	else
-		pool->flags &= ~__GFP_MOVABLE;
 
 	if (zs_pool_stat_create(name, pool))
 		goto err;
