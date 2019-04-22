@@ -709,7 +709,6 @@ static int zram_bvec_write(struct zram *zram, struct bio_vec *bvec, u32 index,
 	struct zram_meta *meta = zram->meta;
 	struct zcomp_strm *zstrm = NULL;
 	unsigned long alloced_pages;
-	static unsigned long zram_rs_time;
 
 	page = bvec->bv_page;
 	if (is_partial_io(bvec)) {
@@ -787,7 +786,6 @@ compress_again:
 	 */
 	if (!handle)
 		handle = zs_malloc(meta->mem_pool, clen,
-				__GFP_KSWAPD_RECLAIM |
 				__GFP_NOWARN |
 				__GFP_HIGHMEM |
 				__GFP_MOVABLE);
