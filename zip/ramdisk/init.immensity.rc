@@ -7,9 +7,17 @@ on late-fs
 	write /sys/block/dm-1/queue/read_ahead_kb 2048
 
 
+service immensity-post-boot /init.immensity.sh
+    class late_start
+    user root
+    enabled
+    oneshot  
+
 on property:sys.boot_completed=1
-        exec u:r:init:s0 -- /init.qcom.post_boot.sh
-        exec u:r:su:s0 root root -- /init.qcom.post_boot.sh
-	exec u:r:magisk:s0 root root -- /init.qcom.post_boot.sh
+	start immesity-post-boot
+        exec u:r:init:s0 -- /init.immensity.sh
+        exec u:r:su:s0 root root -- /init.immensity.sh
+	exec u:r:magisk:s0 root root -- /init.immensity.sh
+
         setprop ro.vendor.qti.config.zram true
 	write /proc/sys/vm/page-cluster 0
