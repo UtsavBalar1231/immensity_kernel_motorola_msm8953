@@ -33,10 +33,10 @@ dump_boot;
 # begin ramdisk changes
 
 rm $ramdisk/init.optimus.rc
-rm $ramdisk/init.immensity.rc
 rm $ramdisk/init.extended_kernel.rc
+# Set executable
 
-backup_file init.rc;
+chmod 755 $ramdisk/init.immensity.sh
 
 insert_line init.rc "init.immensity.rc" after "import /init.usb.configfs.rc" "import /init.immensity.rc";
 
