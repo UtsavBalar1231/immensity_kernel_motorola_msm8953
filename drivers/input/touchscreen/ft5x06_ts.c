@@ -1413,8 +1413,7 @@ static int ft5x06_gpio_configure(struct ft5x06_ts_data *data, bool on)
 		gpio_free(data->pdata->irq_gpio);
 	if (gpio_is_valid(data->pdata->reset_gpio))
 		gpio_free(data->pdata->reset_gpio);
-
-		return 0;
+	return 0;
 
 err_reset_gpio_dir:
 	if (gpio_is_valid(data->pdata->reset_gpio))
@@ -3461,7 +3460,7 @@ static int ft5x06_get_dt_coords(struct device *dev, char *name,
 }
 
 /* ASCII names order MUST match enum */
-static const char const *ascii_names[] = {"charger", "fps", "na"};
+static const char *ascii_names[] = {"charger", "fps", "na"};
 
 static int ft5x06_modifier_name2id(const char *name)
 {
