@@ -1,3 +1,7 @@
+on early-init
+    # Set init and its forked children's oom_adj.
+    write /proc/1/oom_score_adj -1000
+
 on late-fs
 	# boot time fs tune
 	write /sys/block/mmcblk0/queue/read_ahead_kb 2048
