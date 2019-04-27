@@ -418,9 +418,7 @@ enum wake_reason {
 #define	HVDCP_PULSING_VOTER		"HVDCP_PULSING_VOTER"
 
 /* fg cc workaround */
-#if defined(CONFIG_MACH_XIAOMI_LAND)
 #define NO_CHARGE_COUNTER
-#endif
 
 static int smbchg_debug_mask;
 module_param_named(
