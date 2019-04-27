@@ -74,6 +74,7 @@
 #include <linux/binfmts.h>
 #include <linux/context_tracking.h>
 #include <linux/compiler.h>
+#include <linux/cpufreq.h>
 
 #include <asm/switch_to.h>
 #include <asm/tlb.h>
@@ -2179,7 +2180,7 @@ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
 	memset(&p->se.statistics, 0, sizeof(p->se.statistics));
 #endif
 
-#ifdef CONFIG_CPU_FREQ_STAT
+#ifdef	CONFIG_CPU_FREQ_STAT
 	cpufreq_task_stats_init(p);
 #endif
 
@@ -2272,7 +2273,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 
 	__sched_fork(clone_flags, p);
 
-#ifdef CONFIG_CPU_FREQ_STAT
+#ifdef	CONFIG_CPU_FREQ_STAT
 	cpufreq_task_stats_alloc(p);
 #endif
 
@@ -3760,7 +3761,6 @@ static void __setscheduler_params(struct task_struct *p,
 		policy = p->policy;
 	else
 		policy &= ~SCHED_RESET_ON_FORK;
-
 	p->policy = policy;
 
 	if (dl_policy(policy))
