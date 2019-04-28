@@ -2,7 +2,7 @@
  * Core MDSS framebuffer driver.
  *
  * Copyright (C) 2007 Google Incorporated
- * Copyright (c) 2008-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2008-2019, The Linux Foundation. All rights reserved.
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -2127,6 +2127,20 @@ static void mdss_panel_validate_debugfs_info(struct msm_fb_data_type *mfd)
 	}
 }
 
+static void mdss_fb_signal_retire_fence(struct msm_fb_data_type *mfd)
+{
+#ifdef TARGET_HW_MDSS_MDP3
+	struct mdp3_session_data *mdp3_session = mfd_to_mdp3_data(mfd);
+	int retire_cnt = mdp3_session->retire_cnt;
+#else
+	struct mdss_overlay_private *mdp5_data = mfd_to_mdp5_data(mfd);
+	int retire_cnt = mdp5_data->retire_cnt;
+#endif
+
+	if (mfd->mdp.signal_retire_fence)
+		mfd->mdp.signal_retire_fence(mfd, retire_cnt);
+}
+
 static int mdss_fb_blank_blank(struct msm_fb_data_type *mfd,
 	int req_power_state)
 {
@@ -2174,10 +2188,13 @@ static int mdss_fb_blank_blank(struct msm_fb_data_type *mfd,
 	mfd->panel_power_state = req_power_state;
 
 	ret = mfd->mdp.off_fnc(mfd);
-	if (ret)
+	if (ret) {
 		mfd->panel_power_state = cur_power_state;
-	else if (!mdss_panel_is_power_on_interactive(req_power_state))
+	} else if (!mdss_panel_is_power_on_interactive(req_power_state)) {
 		mdss_fb_release_fences(mfd);
+		if (mfd->panel.type == MIPI_CMD_PANEL)
+			mdss_fb_signal_retire_fence(mfd);
+	}
 	mfd->op_enable = true;
 	complete(&mfd->power_off_comp);
 
@@ -3700,9 +3717,9 @@ int mdss_fb_atomic_commit(struct fb_info *info,
 	struct mdp_layer_commit_v1 *commit_v1;
 	struct mdp_output_layer *output_layer;
 	struct mdss_panel_info *pinfo;
-	bool wait_for_finish, update = false, wb_change = false;
+	bool wait_for_finish, wb_change = false;
 	int ret = -EPERM;
-	u32 old_xres, old_yres, old_format;
+	u32 old_xres = 0, old_yres = 0, old_format = 0;
 
 	if (!mfd || (!mfd->op_enable)) {
 		pr_err("mfd is NULL or operation not permitted\n");
@@ -3713,33 +3730,33 @@ int mdss_fb_atomic_commit(struct fb_info *info,
 		!((mfd->dcm_state == DCM_ENTER) &&
 		(mfd->panel.type == MIPI_CMD_PANEL))) {
 		pr_err("commit is not supported when interface is in off state\n");
-		goto end;
+		return ret;
 	}
 	pinfo = mfd->panel_info;
 
 	/* only supports version 1.0 */
 	if (commit->version != MDP_COMMIT_VERSION_1_0) {
 		pr_err("commit version is not supported\n");
-		goto end;
+		return ret;
 	}
 
 	if (!mfd->mdp.pre_commit || !mfd->mdp.atomic_validate) {
 		pr_err("commit callback is not registered\n");
-		goto end;
+		return ret;
 	}
 
 	commit_v1 = &commit->commit_v1;
 	if (commit_v1->flags & MDP_VALIDATE_LAYER) {
 		ret = mdss_fb_wait_for_kickoff(mfd);
 		if (ret) {
-			pr_err("wait for kickoff failed\n");
+			pr_err("wait for kickoff failed, ret: %d\n", ret);
 		} else {
 			__ioctl_transition_dyn_mode_state(mfd,
 				MSMFB_ATOMIC_COMMIT, true, false);
 			if (mfd->panel.type == WRITEBACK_PANEL) {
 				if (!commit_v1->output_layer) {
 					pr_err("Output layer is null\n");
-					goto end;
+					return ret;
 				}
 				output_layer = commit_v1->output_layer;
 				wb_change = !mdss_fb_is_wb_config_same(mfd,
@@ -3752,19 +3769,21 @@ int mdss_fb_atomic_commit(struct fb_info *info,
 						output_layer->buffer.width,
 						output_layer->buffer.height,
 						output_layer->buffer.format);
-					update = true;
 				}
 			}
 			ret = mfd->mdp.atomic_validate(mfd, file, commit_v1);
 			if (!ret)
 				mfd->atomic_commit_pending = true;
+			else if (wb_change)
+				mdss_fb_update_resolution(mfd, old_xres,
+							old_yres, old_format);
 		}
-		goto end;
+		return ret;
 	} else {
 		ret = mdss_fb_pan_idle(mfd);
 		if (ret) {
-			pr_err("pan display idle call failed\n");
-			goto end;
+			pr_err("pan display idle call failed, ret: %d\n", ret);
+			return ret;
 		}
 		__ioctl_transition_dyn_mode_state(mfd,
 			MSMFB_ATOMIC_COMMIT, false,
@@ -3772,8 +3791,8 @@ int mdss_fb_atomic_commit(struct fb_info *info,
 
 		ret = mfd->mdp.pre_commit(mfd, file, commit_v1);
 		if (ret) {
-			pr_err("atomic pre commit failed\n");
-			goto end;
+			pr_err("atomic pre commit failed, ret: %d\n", ret);
+			return ret;
 		}
 	}
 
@@ -3792,9 +3811,6 @@ int mdss_fb_atomic_commit(struct fb_info *info,
 	if (wait_for_finish)
 		ret = mdss_fb_pan_idle(mfd);
 
-end:
-	if (update && ret && (mfd->panel.type == WRITEBACK_PANEL) && wb_change)
-		mdss_fb_update_resolution(mfd, old_xres, old_yres, old_format);
 	return ret;
 }
 
@@ -4025,9 +4041,8 @@ skip_commit:
 	if (IS_ERR_VALUE(ret) || !sync_pt_data->flushed) {
 		mdss_fb_release_kickoff(mfd);
 		mdss_fb_signal_timeline(sync_pt_data);
-		if ((mfd->panel.type == MIPI_CMD_PANEL) &&
-			(mfd->mdp.signal_retire_fence))
-			mfd->mdp.signal_retire_fence(mfd, 1);
+		if (mfd->panel.type == MIPI_CMD_PANEL)
+			mdss_fb_signal_retire_fence(mfd);
 	}
 
 	if (dynamic_dsi_switch) {

@@ -4241,7 +4241,9 @@ static int tasha_codec_enable_lineout_pa(struct snd_soc_dapm_widget *w,
 			lineout_vol_reg = WCD9335_CDC_RX6_RX_PATH_CTL;
 			lineout_mix_vol_reg = WCD9335_CDC_RX6_RX_PATH_MIX_CTL;
 		}
-	} else {
+	}
+
+	if (!lineout_mix_vol_reg || !lineout_vol_reg) {
 		dev_err(codec->dev, "%s: Error enabling lineout PA\n",
 			__func__);
 		return -EINVAL;
@@ -4830,6 +4832,10 @@ static int tasha_codec_spk_boost_event(struct snd_soc_dapm_widget *w,
 		boost_path_cfg1 = WCD9335_CDC_RX8_RX_PATH_CFG1;
 		reg = WCD9335_CDC_RX8_RX_PATH_CTL;
 		reg_mix = WCD9335_CDC_RX8_RX_PATH_MIX_CTL;
+	} else {
+		dev_err(codec->dev, "%s: Invalid name: %s\n",
+						__func__, w->name);
+		return -EINVAL;
 	}
 
 	switch (event) {
@@ -4899,6 +4905,8 @@ static u16 tasha_interp_get_primary_reg(u16 reg, u16 *ind)
 		prim_int_reg = WCD9335_CDC_RX8_RX_PATH_CTL;
 		*ind = 8;
 		break;
+	default: /* This should never happen */
+		pr_err("%s: Unknown reg: %u\n", __func__, reg);
 	};
 
 	return prim_int_reg;
@@ -4986,11 +4994,11 @@ static int tasha_codec_enable_spline_src(struct snd_soc_codec *codec,
 					 int src_num,
 					 int event)
 {
-	u16 rx_path_cfg_reg = 0;
-	u16 rx_path_ctl_reg = 0;
-	u16 src_clk_reg = 0;
+	u16 rx_path_cfg_reg = WCD9335_CDC_RX1_RX_PATH_CFG0;
+	u16 rx_path_ctl_reg = WCD9335_CDC_RX1_RX_PATH_CTL;
+	u16 src_clk_reg = WCD9335_SPLINE_SRC0_CLK_RST_CTL_0;
 	u16 src_paired_reg = 0;
-	int *src_users, count, spl_src = 0;
+	int *src_users, count, spl_src = SPLINE_SRC0;
 	struct tasha_priv *tasha;
 
 	tasha = snd_soc_codec_get_drvdata(codec);
@@ -5052,6 +5060,9 @@ static int tasha_codec_enable_spline_src(struct snd_soc_codec *codec,
 		rx_path_ctl_reg = WCD9335_CDC_RX6_RX_PATH_CTL;
 		spl_src = SPLINE_SRC3;
 		break;
+	default:
+		pr_err("%s: Invalid src_num: %d\n", __func__, src_num);
+		return -EINVAL;
 	};
 
 	src_users = &tasha->spl_src_users[spl_src];
@@ -6328,6 +6339,9 @@ static int tasha_codec_force_enable_micbias(struct snd_soc_dapm_widget *w,
 		ret = __tasha_codec_enable_micbias(w, SND_SOC_DAPM_POST_PMD);
 		wcd_resmgr_disable_master_bias(tasha->resmgr);
 		break;
+	default:
+		pr_err("%s: Invalid event: %d\n", __func__, event);
+		ret = -EINVAL;
 	}
 
 	return ret;
@@ -8579,6 +8593,7 @@ static int tasha_codec_vbat_enable_event(struct snd_soc_dapm_widget *w,
 
 	vbat_path_ctl = WCD9335_CDC_VBAT_VBAT_PATH_CTL;
 	vbat_cfg = WCD9335_CDC_VBAT_VBAT_CFG;
+	vbat_path_cfg = WCD9335_CDC_RX8_RX_PATH_CFG1;
 
 	if (!strcmp(w->name, "RX INT8 VBAT"))
 		vbat_path_cfg = WCD9335_CDC_RX8_RX_PATH_CFG1;
@@ -8588,6 +8603,11 @@ static int tasha_codec_vbat_enable_event(struct snd_soc_dapm_widget *w,
 		vbat_path_cfg = WCD9335_CDC_RX6_RX_PATH_CFG1;
 	else if (!strcmp(w->name, "RX INT5 VBAT"))
 		vbat_path_cfg = WCD9335_CDC_RX5_RX_PATH_CFG1;
+	else {
+		dev_err(codec->dev, "%s: Invalid name: %s\n",
+				__func__, w->name);
+		return -EINVAL;
+	}
 
 	switch (event) {
 	case SND_SOC_DAPM_PRE_PMU:
@@ -8937,7 +8957,7 @@ static int tasha_int_dem_inp_mux_put(struct snd_kcontrol *kcontrol,
 	struct snd_soc_codec *codec = widget->codec;
 	struct soc_enum *e = (struct soc_enum *)kcontrol->private_value;
 	unsigned int val;
-	unsigned short look_ahead_dly_reg = 0;
+	 unsigned short look_ahead_dly_reg = WCD9335_CDC_RX0_RX_PATH_CFG0;
 
 	val = ucontrol->value.enumerated.item[0];
 	if (val >= e->items)
@@ -8952,6 +8972,11 @@ static int tasha_int_dem_inp_mux_put(struct snd_kcontrol *kcontrol,
 		look_ahead_dly_reg = WCD9335_CDC_RX1_RX_PATH_CFG0;
 	else if (e->reg == WCD9335_CDC_RX2_RX_PATH_SEC0)
 		look_ahead_dly_reg = WCD9335_CDC_RX2_RX_PATH_CFG0;
+	else {
+		dev_err(codec->dev, "%s: Invalid reg: 0x%x\n",
+						__func__, e->reg);
+		return -EINVAL;
+	}
 
 	/* Set Look Ahead Delay */
 	snd_soc_update_bits(codec, look_ahead_dly_reg,
@@ -13488,7 +13513,7 @@ static void tasha_cdc_change_cpe_clk(void *data,
 {
 	struct snd_soc_codec *codec = data;
 	struct tasha_priv *tasha;
-	u32 cpe_clk_khz, req_freq;
+	u32 cpe_clk_khz, req_freq = 0;
 
 	if (!codec) {
 		pr_err("%s: Invalid codec handle\n",
@@ -13504,19 +13529,17 @@ static void tasha_cdc_change_cpe_clk(void *data,
 			req_freq = CPE_FLL_CLK_75MHZ;
 		else
 			req_freq = CPE_FLL_CLK_150MHZ;
+
+		if (__tasha_cdc_change_cpe_clk(codec, req_freq))
+			dev_err(codec->dev,
+				"%s: clock/voltage scaling failed\n",
+				__func__);
 	}
 
 	dev_dbg(codec->dev,
 		"%s: requested clk_freq = %u, current clk_freq = %u\n",
 		__func__, clk_freq * 1000,
 		tasha->current_cpe_clk_freq);
-
-	if (tasha_cdc_is_svs_enabled(tasha)) {
-		if (__tasha_cdc_change_cpe_clk(codec, req_freq))
-			dev_err(codec->dev,
-				"%s: clock/voltage scaling failed\n",
-				__func__);
-	}
 }
 
 static int tasha_codec_slim_reserve_bw(struct snd_soc_codec *codec,

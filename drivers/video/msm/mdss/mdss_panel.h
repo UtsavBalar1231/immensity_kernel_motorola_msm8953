@@ -1,4 +1,4 @@
-/* Copyright (c) 2008-2018, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2008-2019, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -130,7 +130,7 @@ struct panel_param {
 
 static inline const char *mdss_panel2str(u32 panel)
 {
-	static const char const *names[] = {
+	static const char *names[] = {
 #define PANEL_NAME(n) [n ## _PANEL] = __stringify(n)
 		PANEL_NAME(MIPI_VIDEO),
 		PANEL_NAME(MIPI_CMD),
@@ -1002,14 +1002,14 @@ static inline u32 mdss_panel_get_framerate(struct mdss_panel_info *panel_info,
 	case WRITEBACK_PANEL:
 		frame_rate = DEFAULT_FRAME_RATE;
 		break;
+	case SPI_PANEL:
+		frame_rate = panel_info->spi.frame_rate;
+		break;
 	case DTV_PANEL:
 		if (panel_info->dynamic_fps) {
 			frame_rate = panel_info->lcdc.frame_rate;
 			break;
 		}
-	case SPI_PANEL:
-		frame_rate = panel_info->spi.frame_rate;
-		break;
 	default:
 		pixel_total = (panel_info->lcdc.h_back_porch +
 			  panel_info->lcdc.h_front_porch +

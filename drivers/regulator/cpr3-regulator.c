@@ -3523,7 +3523,8 @@ cleanup:
 	cpr3_write(ctrl, CPR3_REG_GCNT(1), gcnt1_restore);
 
 	if (ctrl->supports_hw_closed_loop
-		&& ctrl->ctrl_type == CPR_CTRL_TYPE_CPR3) {
+		&& ctrl->ctrl_type == CPR_CTRL_TYPE_CPR3
+		&& up_down_dly_restore) {
 		cpr3_write(ctrl, CPR3_REG_CPR_TIMER_MID_CONT, cont_dly_restore);
 		cpr3_write(ctrl, CPR3_REG_CPR_TIMER_UP_DN_CONT,
 				up_down_dly_restore);
@@ -3766,7 +3767,6 @@ static int cpr3_regulator_aging_adjust(struct cpr3_controller *ctrl)
 	}
 
 	/* Perform aging measurement on all aging sensors */
-	max_aging_volt = 0;
 	for (i = 0; i < ctrl->aging_sensor_count; i++) {
 		for (j = 0; j < CPR3_AGING_RETRY_COUNT; j++) {
 			rc = cpr3_regulator_measure_aging(ctrl,
@@ -6097,11 +6097,12 @@ int cpr3_regulator_unregister(struct cpr3_controller *ctrl)
 	if (ctrl->irq && !cpumask_empty(&ctrl->irq_affinity_mask))
 		unregister_hotcpu_notifier(&ctrl->cpu_hotplug_notifier);
 
-	if (ctrl->ctrl_type == CPR_CTRL_TYPE_CPR4)
+	if (ctrl->ctrl_type == CPR_CTRL_TYPE_CPR4) {
 		rc = cpr3_ctrl_clear_cpr4_config(ctrl);
 		if (rc)
 			cpr3_err(ctrl, "failed to clear CPR4 configuration,rc=%d\n",
 				rc);
+	}
 
 	cpr3_ctrl_loop_disable(ctrl);
 

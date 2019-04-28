@@ -908,7 +908,7 @@ exit:
 /* To determine if cross connection occured */
 static int wcd_check_cross_conn(struct wcd_mbhc *mbhc)
 {
-	u16 swap_res;
+	u16 swap_res = 0;
 	enum wcd_mbhc_plug_type plug_type = MBHC_PLUG_TYPE_NONE;
 	s16 reg1 = 0;
 	bool hphl_sch_res = false, hphr_sch_res = false;
@@ -1706,9 +1706,9 @@ static irqreturn_t wcd_mbhc_hs_ins_irq(int irq, void *data)
 {
 	struct wcd_mbhc *mbhc = data;
 	bool detection_type = false, hphl_sch = false, mic_sch = false;
-	u16 elect_result;
-	static u16 hphl_trigerred;
-	static u16 mic_trigerred;
+	u16 elect_result = 0;
+	static u16 hphl_trigerred = 0;
+	static u16 mic_trigerred = 0;
 
 	pr_debug("%s: enter\n", __func__);
 	if (!mbhc->mbhc_cfg->detect_extn_cable) {
@@ -1898,7 +1898,7 @@ static void wcd_btn_lpress_fn(struct work_struct *work)
 {
 	struct delayed_work *dwork;
 	struct wcd_mbhc *mbhc;
-	s16 btn_result;
+	s16 btn_result = 0;
 
 	pr_debug("%s: Enter\n", __func__);
 

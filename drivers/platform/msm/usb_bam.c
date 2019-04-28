@@ -126,13 +126,13 @@ static char *bam_enable_strings[MAX_BAMS] = {
  * CI_CTRL & DWC3_CTRL shouldn't be used simultaneously
  * since both share the same prod & cons rm resourses
  */
-static enum ipa_client_type ipa_rm_resource_prod[MAX_BAMS] = {
+static enum ipa_rm_resource_name ipa_rm_resource_prod[MAX_BAMS] = {
 	[CI_CTRL] = IPA_RM_RESOURCE_USB_PROD,
 	[HSIC_CTRL]  = IPA_RM_RESOURCE_HSIC_PROD,
 	[DWC3_CTRL] = IPA_RM_RESOURCE_USB_PROD,
 };
 
-static enum ipa_client_type ipa_rm_resource_cons[MAX_BAMS] = {
+static enum ipa_rm_resource_name ipa_rm_resource_cons[MAX_BAMS] = {
 	[CI_CTRL] = IPA_RM_RESOURCE_USB_CONS,
 	[HSIC_CTRL]  = IPA_RM_RESOURCE_HSIC_CONS,
 	[DWC3_CTRL] = IPA_RM_RESOURCE_USB_CONS,
@@ -2765,7 +2765,6 @@ static void usb_bam_sps_events(enum sps_callback_case sps_cb_case, void *user)
 		log_event_dbg("%s: received SPS_CALLBACK_BAM_TIMER_IRQ\n",
 				__func__);
 		bam = get_bam_type_from_core_name((char *)user);
-
 		if (bam < 0 || bam >= MAX_BAMS) {
 			log_event_err("%s: Invalid bam, type=%d ,name=%s\n",
 				__func__, bam, (char *)user);
@@ -2774,9 +2773,6 @@ static void usb_bam_sps_events(enum sps_callback_case sps_cb_case, void *user)
 
 		ctx = &msm_usb_bam[bam];
 		spin_lock(&ctx->usb_bam_lock);
-
-		spin_lock(&ctx->usb_bam_lock);
-
 		ctx->is_bam_inactivity = true;
 		log_event_dbg("%s: Inactivity happened on bam=%s,%d\n",
 				__func__, (char *)user, bam);

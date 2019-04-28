@@ -11877,7 +11877,7 @@ WLAN_TLAPGetNextTxIds
   if ( WLAN_MAX_STA_COUNT <= ucNextSTA )
     ucNextSTA = 0;
 
-    isServed = FALSE;
+	    isServed = FALSE;
     if ( 0 == pTLCb->ucCurLeftWeight )
     {
       //current prioirty is done
@@ -14756,7 +14756,7 @@ WLANTL_RmcDeleteRmcSession
 {
     WLANTL_RMC_SESSION *pHead;
     WLANTL_RMC_SESSION *pNode;
-    WLANTL_RMC_SESSION *pPrev;
+    WLANTL_RMC_SESSION *pPrev = 0;
     tANI_U8               index;
 
     index = WLANTL_RmcHashRmcSession(pMcastAddr);
