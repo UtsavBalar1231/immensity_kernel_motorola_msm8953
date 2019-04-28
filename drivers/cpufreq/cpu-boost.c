@@ -35,7 +35,7 @@ static DEFINE_PER_CPU(struct cpu_sync, sync_info);
 
 static bool input_boost_enabled;
 
-static unsigned int input_boost_ms = 1500;
+static unsigned int input_boost_ms = 600;
 module_param(input_boost_ms, uint, 0644);
 
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
@@ -244,7 +244,7 @@ void do_input_boost_max()
 
 	queue_delayed_work(system_power_efficient_wq,
 		&input_boost_rem, msecs_to_jiffies(
-			input_boost_ms < 1500 ? 1500 : input_boost_ms));
+			input_boost_ms < 600 ? 600 : input_boost_ms));
 }
 
 static void do_input_boost(struct kthread_work *work)
@@ -404,7 +404,7 @@ static int cpu_boost_init(void)
 	for_each_possible_cpu(cpu) {
 		s = &per_cpu(sync_info, cpu);
 		s->cpu = cpu;
-		s->input_boost_freq = 1401600;
+		s->input_boost_freq = 1036800;
 	}
 	cpufreq_register_notifier(&boost_adjust_nb, CPUFREQ_POLICY_NOTIFIER);
 	ret = input_register_handler(&cpuboost_input_handler);
