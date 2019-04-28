@@ -87,29 +87,23 @@ KBUILD_AFLAGS	+= $(arch-y) $(tune-y)
 #################################
 # Cortex-A53 Optimization Flags #
 #################################
-KBUILD_CFLAGS   += $(call cc-option, -g0,) \
-                   $(call cc-option, -ffast-math,) \
+KBUILD_CFLAGS   += $(call cc-option, -ffast-math,) \
                    $(call cc-option, -floop-nest-optimize,) \
                    $(call cc-option, -fgraphite-identity,) \
                    $(call cc-option, -ftree-loop-distribution,) \
                    $(call cc-option, -funsafe-math-optimizations,) \
-                   $(call cc-option, -mcpu=cortex-a53+crc+crypto+sve+simd,) \
-                   $(call cc-option, -march=armv8-a+crc+crypto+sve+simd,) \
-                   $(call cc-option, -mtune=cortex-a53,)
-KBUILD_AFLAGS   += $(call cc-option, -g0,) \
-                   $(call cc-option, -ffast-math,) \
+                   $(call cc-option, -march=armv8-a+crc+crypto+sve+simd,)
+
+KBUILD_AFLAGS   += $(call cc-option, -ffast-math,) \
                    $(call cc-option, -floop-nest-optimize,) \
                    $(call cc-option, -fgraphite-identity,) \
                    $(call cc-option, -ftree-loop-distribution,) \
                    $(call cc-option, -funsafe-math-optimizations,) \
-                   $(call cc-option, -mcpu=cortex-a53+crc+crypto+sve+simd,) \
                    $(call cc-option, -march=armv8-a+crc+crypto+sve+simd,) \
-                   $(call cc-option, -mtune=cortex-a53,)
-KBUILD_LDFLAGS  += $(call ld-option, -z combreloc,) \
-                   $(call ld-option, --reduce-memory-overheads)
+                   $(call ld-option, -z combreloc,) \
+
 LDFLAGS_vmlinux += $(call ld-option, --relax) \
                    $(call ld-option, --reduce-memory-overheads)
-EXTRA_CFLAGS += $(call cc-option,-funroll-loops)
 
 CHECKFLAGS	+= -D__aarch64__
 
