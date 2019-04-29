@@ -21,9 +21,6 @@ qcom,mdss-dsi-panel-width = <1080>;
 qcom,mdss-dsi-panel-height = <2160>;
 qcom,mdss-pan-physical-width-dimension = <62>;
 qcom,mdss-pan-physical-height-dimension = <110>;
-qcom,ulps-enabled;
-qcom,suspend-ulps-enabled;
-qcom,panel-allow-phy-poweroff;
 qcom,mdss-dsi-h-front-porch = <53>;
 qcom,mdss-dsi-h-back-porch = <53>;
 qcom,mdss-dsi-h-pulse-width = <4>;
@@ -97,6 +94,7 @@ qcom,mdss-dsi-dma-trigger = "trigger_sw";
 qcom,mdss-dsi-mdp-trigger = "none";
 qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
 qcom,mdss-dsi-reset-sequence = <1 5>, <0 1>, <1 10>;
+qcom,mdss-dsi-lp11-init;
 qcom,mdss-dsi-tx-eot-append;
 qcom,mdss-dsi-init-delay-us = <50000>;
 
