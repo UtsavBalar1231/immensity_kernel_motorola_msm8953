@@ -28,7 +28,7 @@
 #include "slim-msm.h"
 
 #define MSM_SLIM_NAME	"msm_slim_ctrl"
-#define SLIM_ROOT_FREQ 24576000
+#define SLIM_ROOT_FREQ 24600000
 
 #define QC_MSM_DEVS	5
 
