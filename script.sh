@@ -142,24 +142,23 @@ rm -rf $ZIP_DIR/dtb
 
 echo -e "$yellow // - Copying Image.gz - //"
 cp $KERNEL_DIR/out/arch/arm64/boot/Image.gz $ZIP_DIR/treble-unsupported/
-
 ############################################################################################################################################################
 
 echo -e "$yellow // - Copying dtb - //"
 cp $KERNEL_DIR/out/arch/arm64/boot/dtb $ZIP_DIR/treble-unsupported/
 
 ############################################################################################################################################################
-																			   #
-echo -e "$yellow // - Time to zip everything up! - //"												           #
-cd $ZIP_DIR/																		   #
-zip -r9 $FINAL_KERNEL_ZIP * -x README $FINAL_KERNEL_ZIP													   #
-cp $KERNEL_DIR/zip/$FINAL_KERNEL_ZIP $HOMEPATH/$FINAL_KERNEL_ZIP											   #
-																			   #
+echo -e "$yellow // - Time to zip everything up! - //"
+if [ -e out/arch/arm64/boot/Image.gz ]; then
+cd $ZIP_DIR
+zip -r9 $FINAL_KERNEL_ZIP * -x README $FINAL_KERNEL_ZIP
+cp $KERNEL_DIR/zip/$FINAL_KERNEL_ZIP $HOMEPATH/$FINAL_KERNEL_ZIP
+else
+echo 'No boot image!'
+fi
 ############################################################################################################################################################
-																			   
-echo -e "$yellow // - Build Successfull - //"													           
-cd $KERNEL_DIR																		   
-																			   
+echo -e "$yellow // - Build Successfull - //"
+cd $KERNEL_DIR
 ############################################################################################################################################################
 # Clean up Everything																	   #
 ############################################################################################################################################################
@@ -173,9 +172,7 @@ rm -rf $KERNEL_DIR/out/																	   #
 ############################################################################################################################################################
 # Build Status																		   #
 ############################################################################################################################################################
-#
-BUILD_END=$(date +"%s")																	   
-DIFF=$(($BUILD_END - $BUILD_START))															   
-echo -e "$yellow IMMENSITY • KERNEL Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."						   
-																			   
+BUILD_END=$(date +"%s")
+DIFF=$(($BUILD_END - $BUILD_START))
+echo -e "$yellow IMMENSITY • KERNEL Build completed in $(($DIFF / 60)) minute(s) and $(($DIFF % 60)) seconds."
 ############################################################################################################################################################
