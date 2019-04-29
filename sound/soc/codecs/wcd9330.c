@@ -82,7 +82,7 @@ enum {
 #define HPH_PA_ENABLE true
 #define HPH_PA_DISABLE false
 
-#define SLIM_BW_CLK_GEAR_9 12400000
+#define SLIM_BW_CLK_GEAR_10 24600000
 #define SLIM_BW_UNVOTE 0
 
 static int cpe_debug_mode;
@@ -8577,7 +8577,7 @@ static int tomtom_codec_vote_max_bw(struct snd_soc_codec *codec,
 	u32 bw_ops;
 
 	if (vote)
-		bw_ops = SLIM_BW_CLK_GEAR_9;
+		bw_ops = SLIM_BW_CLK_GEAR_10;
 	else
 		bw_ops = SLIM_BW_UNVOTE;
 
