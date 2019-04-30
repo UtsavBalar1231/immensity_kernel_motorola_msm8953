@@ -717,7 +717,7 @@ static int32_t nvt_read_fw_open(int32_t *xdata)
 	uint8_t *rawdata_buf = NULL;
 	uint32_t x = 0;
 	uint32_t y = 0;
-	uint8_t buf[128] = {0};
+	uint8_t buf[32] = {0};
 #if TOUCH_KEY_NUM > 0
 	uint32_t raw_btn_pipe_addr = 0;
 	int32_t k = 0;
@@ -818,7 +818,7 @@ static int32_t nvt_read_fw_short(int32_t *xdata)
 	uint8_t *rawdata_buf = NULL;
 	uint32_t x = 0;
 	uint32_t y = 0;
-	uint8_t buf[128] = {0};
+	uint8_t buf[32] = {0};
 	int32_t iArrayIndex = 0;
 #if TOUCH_KEY_NUM > 0
 	uint32_t raw_btn_pipe_addr = 0;
