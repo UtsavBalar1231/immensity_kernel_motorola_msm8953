@@ -16,7 +16,7 @@ DATE_POSTFIX=$(date +"%Y%m%d")
 
 KERNEL_DIR=$PWD
 HOMEPATH=/home/utsavbalar1231
-KERNEL_TOOLCHAIN=$HOMEPATH/gcc8/bin/aarch64-linux-gnu-
+KERNEL_TOOLCHAIN=$HOMEPATH/gcc9/bin/aarch64-linux-gnu-
 CLANG_TOOLCHAIN=$HOMEPATH/clang/bin/clang-9
 KERNEL_DEFCONFIG=potter_defconfig
 DTB=$KERNEL_DIR/dtbtool/
