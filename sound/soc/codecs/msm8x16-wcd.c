@@ -103,9 +103,9 @@ enum {
 #define MICBIAS_MIN_VAL 1600000
 #define MICBIAS_STEP_SIZE 50000
 
-#define DEFAULT_BOOST_VOLTAGE 5200
-#define MIN_BOOST_VOLTAGE 4200
-#define MAX_BOOST_VOLTAGE 5750
+#define DEFAULT_BOOST_VOLTAGE 5000
+#define MIN_BOOST_VOLTAGE 4000
+#define MAX_BOOST_VOLTAGE 5550
 #define BOOST_VOLTAGE_STEP 50
 
 #define MSM8X16_WCD_MBHC_BTN_COARSE_ADJ  100 /* in mV */
@@ -2104,7 +2104,7 @@ static int msm8x16_wcd_hph_mode_get(struct snd_kcontrol *kcontrol,
 	struct msm8x16_wcd_priv *msm8x16_wcd = snd_soc_codec_get_drvdata(codec);
 
 	if (msm8x16_wcd->hph_mode == NORMAL_MODE) {
-		ucontrol->value.integer.value[0] = 1;
+		ucontrol->value.integer.value[0] = 0;
 	} else if (msm8x16_wcd->hph_mode == HD2_MODE) {
 		ucontrol->value.integer.value[0] = 1;
 	} else  {
@@ -2128,14 +2128,14 @@ static int msm8x16_wcd_hph_mode_set(struct snd_kcontrol *kcontrol,
 
 	switch (ucontrol->value.integer.value[0]) {
 	case 0:
-		msm8x16_wcd->hph_mode = HD2_MODE;
+		msm8x16_wcd->hph_mode = NORMAL_MODE;
 		break;
 	case 1:
 		if (get_codec_version(msm8x16_wcd) >= DIANGU)
 			msm8x16_wcd->hph_mode = HD2_MODE;
 		break;
 	default:
-		msm8x16_wcd->hph_mode = HD2_MODE;
+		msm8x16_wcd->hph_mode = NORMAL_MODE;
 		break;
 	}
 	dev_dbg(codec->dev, "%s: msm8x16_wcd->hph_mode_set = %d\n",
@@ -5563,7 +5563,7 @@ static int msm8x16_wcd_device_down(struct snd_soc_codec *codec)
 		}
 	}
 	msm8x16_wcd_boost_off(codec);
-	msm8x16_wcd_priv->hph_mode = HD2_MODE;
+	msm8x16_wcd_priv->hph_mode = NORMAL_MODE;
 	for (i = 0; i < MSM8X16_WCD_RX_MAX; i++)
 		msm8x16_wcd_priv->comp_enabled[i] = COMPANDER_NONE;
 
@@ -5825,7 +5825,7 @@ static ssize_t mic_gain_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "%d\n",
-		snd_soc_read(sound_control_codec_ptr, MSM8X16_WCD_A_CDC_TX1_VOL_CTL_GAIN)); //Read gain just on DEC1, will be the same of DEC2.
+		snd_soc_read(sound_control_codec_ptr, MSM8X16_WCD_A_CDC_TX1_VOL_CTL_GAIN));
 }
 
 static ssize_t mic_gain_store(struct kobject *kobj,
@@ -5838,8 +5838,7 @@ static ssize_t mic_gain_store(struct kobject *kobj,
 	if (input < -10 || input > 20)
 		input = 0;
 
-	snd_soc_write(sound_control_codec_ptr, MSM8X16_WCD_A_CDC_TX1_VOL_CTL_GAIN, input); //Write single gain on DEC1
-	snd_soc_write(sound_control_codec_ptr, MSM8X16_WCD_A_CDC_TX2_VOL_CTL_GAIN, input); //Write single gain on DEC2
+	snd_soc_write(sound_control_codec_ptr, MSM8X16_WCD_A_CDC_TX1_VOL_CTL_GAIN, input);
 
 	return count;
 }
@@ -5966,7 +5965,7 @@ static int msm8x16_wcd_codec_probe(struct snd_soc_codec *codec)
 	 * it to BOOST_ALWAYS or BOOST_BYPASS based on solution chosen.
 	 */
 	msm8x16_wcd_priv->boost_option = BOOST_SWITCH;
-	msm8x16_wcd_priv->hph_mode = HD2_MODE;
+	msm8x16_wcd_priv->hph_mode = NORMAL_MODE;
 
 	for (i = 0; i < MSM8X16_WCD_RX_MAX; i++)
 		msm8x16_wcd_priv->comp_enabled[i] = COMPANDER_NONE;
