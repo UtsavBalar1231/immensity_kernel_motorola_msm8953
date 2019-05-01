@@ -636,6 +636,9 @@ KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
 # Kill all maybe-uninitialized warnings
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
 
+# Silence 'address-of-packed-member' warning
+KBUILD_CFLAGS	+= $(call cc-disable-warning, address-of-packed-member)
+
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= $(call cc-option,-Oz,-Os)
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
