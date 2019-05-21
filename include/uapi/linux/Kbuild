@@ -519,3 +519,5 @@ header-y += android_pmem.h
 header-y += smcinvoke.h
 header-y += bgcom_interface.h
 header-y += habmm.h
+subdir-ccflags-y += \
+		-Wno-packed-not-aligned			
