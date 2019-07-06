@@ -1021,7 +1021,7 @@ int pil_desc_init(struct pil_desc *desc)
 		addr = pil_info_base + sizeof(struct pil_image_info) * priv->id;
 		priv->info = (struct pil_image_info __iomem *)addr;
 
-		strncpy(buf, desc->name, sizeof(buf));
+		memcpy(buf, desc->name, sizeof(buf));
 		__iowrite32_copy(priv->info->name, buf, sizeof(buf) / 4);
 	}
 
