@@ -681,6 +681,9 @@ EXPORT_SYMBOL(xt_compat_check_entry_offsets);
  *
  * Also see xt_compat_check_entry_offsets for CONFIG_COMPAT version.
  *
+ * This function does not validate the targets or matches themselves, it
+ * only tests that all the offsets and sizes are correct.
+ *
  * The arp/ip/ip6t_entry structure @base must have passed following tests:
  * - it must point to a valid memory location
  * - base to base + next_offset must be accessible, i.e. not exceed allocated
@@ -1648,7 +1651,7 @@ static int __init xt_init(void)
 		seqcount_init(&per_cpu(xt_recseq, i));
 	}
 
-	xt = kmalloc(sizeof(struct xt_af) * NFPROTO_NUMPROTO, GFP_KERNEL);
+	xt = kcalloc(NFPROTO_NUMPROTO, sizeof(struct xt_af), GFP_KERNEL);
 	if (!xt)
 		return -ENOMEM;
 
