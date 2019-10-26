@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 header-y += ais/
 header-y += tavarua.h
+=======
+>>>>>>> efd7f94b719b82cf0f5806253271f7deb02c10c2
 header-y += msm_cam_sensor.h
 header-y += msm_camera.h
 header-y += msm_camsensor_sdk.h

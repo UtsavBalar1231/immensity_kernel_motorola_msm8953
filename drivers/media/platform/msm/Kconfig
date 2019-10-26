@@ -57,8 +57,6 @@ if MSMB_CAMERA
 source "drivers/media/platform/msm/camera_v2/Kconfig"
 endif # MSMB_CAMERA
 
-source "drivers/media/platform/msm/ais/Kconfig"
-
 if MSMB_CAMERA_2016
 source "drivers/media/platform/msm/camera_v2_2016/Kconfig"
 endif # MSMB_CAMERA_2016
