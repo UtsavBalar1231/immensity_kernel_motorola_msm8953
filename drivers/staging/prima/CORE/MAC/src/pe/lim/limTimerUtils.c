@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2017, 2019 The Linux Foundation. All rights reserved.
+ * Copyright (c) 2012-2017 The Linux Foundation. All rights reserved.
  *
  * Previously licensed under the ISC license by Qualcomm Atheros, Inc.
  *
@@ -55,12 +55,6 @@
 // Lim JoinProbeRequest Retry  timer default (200)ms
 #define LIM_JOIN_PROBE_REQ_TIMER_MS              200
 #define LIM_AUTH_RETRY_TIMER_MS              60
-
-/*
- * SAE auth timer of 5secs. This is required for duration of entire SAE
- * authentication.
- */
-#define LIM_AUTH_SAE_TIMER_MS 5000
 
 //default beacon interval value used in HB timer interval calculation
 #define LIM_HB_TIMER_BEACON_INTERVAL             100
@@ -435,18 +429,6 @@ limCreateTimers(tpAniSirGlobal pMac)
                    FL("unable to create ProbeAfterHBTimer"));
             goto err_timer;
         }
-
-       /*
-        * SAE auth timer of 5secs. This is required for duration of entire SAE
-        * authentication.
-        */
-       if ((tx_timer_create(&pMac->lim.limTimers.sae_auth_timer,
-             "SAE AUTH Timer", limTimerHandler, SIR_LIM_AUTH_SAE_TIMEOUT,
-             SYS_MS_TO_TICKS(LIM_AUTH_SAE_TIMER_MS), 0, TX_NO_ACTIVATE)) !=
-             TX_SUCCESS) {
-           limLog(pMac, LOGP, FL("could not create SAE AUTH Timer"));
-           goto err_timer;
-       }
 
         if (wlan_cfgGetInt(pMac, WNI_CFG_BACKGROUND_SCAN_PERIOD,
                       &cfgValue) != eSIR_SUCCESS)
@@ -1952,21 +1934,6 @@ limDeactivateAndChangeTimer(tpAniSirGlobal pMac, tANI_U32 timerId)
         {
                 limLog(pMac, LOGE, FL("Unable to change g_lim_ap_ecsa_timer timer"));
         }
-
-    case eLIM_AUTH_SAE_TIMER:
-        if (tx_timer_deactivate(&pMac->lim.limTimers.sae_auth_timer)
-            != TX_SUCCESS) {
-            limLog(pMac, LOGP, FL("Unable to deactivate SAE auth timer"));
-            return;
-        }
-        /* Change timer to reactivate it in future */
-        val = SYS_MS_TO_TICKS(LIM_AUTH_SAE_TIMER_MS);
-        if (tx_timer_change(&pMac->lim.limTimers.sae_auth_timer,
-            val, 0) != TX_SUCCESS) {
-            limLog(pMac, LOGP, FL("unable to change SAE auth timer"));
-            return;
-        }
-        break;
 
         break;
      default:
