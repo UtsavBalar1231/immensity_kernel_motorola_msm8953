@@ -1789,6 +1789,13 @@ static int migrate_zspage(struct zs_pool *pool, struct size_class *class,
 		zs_object_copy(free_obj, used_obj, class);
 		free_obj |= (1 << HANDLE_PIN_BIT);
 		index++;
+		/*
+		 * record_obj updates handle's value to free_obj and it will
+		 * invalidate lock bit(ie, HANDLE_PIN_BIT) of handle, which
+		 * breaks synchronization using pin_tag(e,g, zs_free) so
+		 * let's keep the lock bit.
+		 */
+		free_obj |= BIT(HANDLE_PIN_BIT);
 		record_obj(handle, free_obj);
 		unpin_tag(handle);
 		obj_free(pool, class, used_obj);
